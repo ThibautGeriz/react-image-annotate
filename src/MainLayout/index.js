@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useState } from "react"
+import type { Node } from "react"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import Sidebar from "../Sidebar"
@@ -19,10 +20,11 @@ const useStyles = makeStyles(styles)
 
 type Props = {
   state: MainLayoutState,
+  RegionEditLabel?: Node,
   dispatch: Action => any
 }
 
-export default ({ state, dispatch }: Props) => {
+export default ({ state, dispatch, RegionEditLabel }: Props) => {
   const classes = useStyles()
   const settings = useSettings()
 
@@ -94,7 +96,6 @@ export default ({ state, dispatch }: Props) => {
                   dragWithPrimary={state.selectedTool === "pan"}
                   zoomWithPrimary={state.selectedTool === "zoom"}
                   showPointDistances={state.showPointDistances}
-                  pointDistancePrecision={state.pointDistancePrecision}
                   onMouseMove={action("MOUSE_MOVE")}
                   onMouseDown={action("MOUSE_DOWN")}
                   onMouseUp={action("MOUSE_UP")}
@@ -121,6 +122,7 @@ export default ({ state, dispatch }: Props) => {
                   onSelectRegion={action("SELECT_REGION", "region")}
                   onBeginMovePoint={action("BEGIN_MOVE_POINT", "point")}
                   onImageLoaded={action("IMAGE_LOADED", "image")}
+                  RegionEditLabel={RegionEditLabel}
                 />
               </div>
             )}

@@ -6,6 +6,7 @@ import React, {
   useLayoutEffect,
   useEffect
 } from "react"
+import type { Node } from "react"
 import { Matrix } from "transformation-matrix-js"
 import getImageData from "get-image-data"
 import Crosshairs from "../Crosshairs"
@@ -20,7 +21,7 @@ import { getEnclosingBox } from "./region-tools.js"
 import { makeStyles } from "@material-ui/core/styles"
 import styles from "./styles"
 import classnames from "classnames"
-import RegionLabel from "../RegionLabel"
+import DefaultRegionLabel from "../RegionLabel"
 import LockIcon from "@material-ui/icons/Lock"
 import Paper from "@material-ui/core/Paper"
 import HighlightBox from "../HighlightBox"
@@ -62,6 +63,7 @@ type Props = {
   regionClsList?: Array<string>,
   regionTagList?: Array<string>,
   allowedArea?: { x: number, y: number, w: number, h: number },
+  RegionEditLabel?: Node,
 
   onChangeRegion: Region => any,
   onBeginRegionEdit: Region => any,
@@ -94,6 +96,7 @@ export default ({
   showCrosshairs,
   showPointDistances,
   allowedArea,
+  RegionEditLabel = null,
 
   onImageLoaded,
   onChangeRegion,
@@ -107,7 +110,8 @@ export default ({
   onDeleteRegion
 }: Props) => {
   const classes = useStyles()
-
+  const RegionLabel =
+    RegionEditLabel != null ? RegionEditLabel : DefaultRegionLabel
   const canvasEl = useRef(null)
   const image = useRef(null)
   const layoutParams = useRef({})
@@ -216,7 +220,12 @@ export default ({
       const { x, y, w, h } = allowedArea
       context.save()
       context.globalAlpha = 0.25
-      const outer = [[0, 0], [iw, 0], [iw, ih], [0, ih]]
+      const outer = [
+        [0, 0],
+        [iw, 0],
+        [iw, ih],
+        [0, ih]
+      ]
       const inner = [
         [x * iw, y * ih],
         [x * iw + w * iw, y * ih],
@@ -753,11 +762,14 @@ export default ({
                     onDelete={onDeleteRegion}
                     editing={region.editingLabels}
                     region={region}
+                    regions={regions}
+                    imageSrc={imageSrc}
                   />
                 </div>
               </div>
             )
           })}
+
       {zoomWithPrimary && zoomBox !== null && (
         <div
           style={{
